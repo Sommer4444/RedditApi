@@ -24,17 +24,19 @@ builder.Services.AddDbContext<RedditContext>(options =>
 
 app.MapGet("/", () => "Hello World!");
 
-
-
-
-
 //Post: Opret en ny post på siden
-
 app.MapPost("/api/posts", (RedditContext db, Post post) =>
 {
     db.Posts.Add(post);
     db.SaveChanges();
 });
+
+app.MapPost("/api/posts/{id}/comments", (RedditContext db, int id, Comment comment) =>
+{
+    //Tilføjelse af resten af koden Ali!
+});
+
+
 
 //Seed Data
 

@@ -6,4 +6,7 @@ public class Comment
     public string Text { get; set; }
     public int Upvote { get; set; }
     public int Downvote { get; set; }
+    
+    //Så vi ved hvem der kommenterer
+    public User User { get; set; }
 }

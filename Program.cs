@@ -1,4 +1,5 @@
 using RedditApi.Models;
+using RedditApi.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();

@@ -51,12 +51,26 @@ var posts = new List<Post>
 
 // --- 4. ENDPOINTS ---
 
-app.MapGet("/", () => "Morten er en fkn Nuddelspiser!");
+app.MapGet("/api/", () => "Morten er en fkn Nuddelspiser!");
 
 app.MapGet("/api/posts", () =>
 {
     return Results.Ok(posts);
 });
+
+
+app.MapGet("/api/posts/{id}", (int id) =>
+{
+    var post = posts.FirstOrDefault(p => p.PostId == id);
+
+    if (post == null)
+    {
+        return Results.NotFound(new { error = $"Post med id {id} findes ikke." });
+    }
+
+    return Results.Ok(post);
+});
+
 
 // Post: Opret en ny post i databasen
 app.MapPost("/api/posts", (RedditContext db, Post post) =>

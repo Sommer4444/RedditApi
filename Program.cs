@@ -18,7 +18,7 @@ builder.Services.AddCors(options =>
 
 // Tilføj DbContext
 builder.Services.AddDbContext<RedditContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("ContextSQLite")))
+    options.UseSqlite(builder.Configuration.GetConnectionString("ContextSQLite")));
     
 builder.Services.AddScoped<RedditService>();
 

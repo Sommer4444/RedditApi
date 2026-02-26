@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vores Reddit Klon</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .post { border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
+        .upvotes { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<h1>Reddit Klon Frontend</h1>
+<p>Velkommen! Herunder hentes data direkte fra jeres C# Backend.</p>
+
+<div id="posts-container">
+</div>
+
+<script>
+    // Sørg for at denne URL matcher den port jeres backend kører på!
+    // Ud fra jeres launchSettings.json er det localhost:5242
+    const apiUrl = 'http://localhost:5242/api/posts';
+
+    // Fetch henter data fra jeres backend API
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(posts => {
+            const container = document.getElementById('posts-container');
+
+            // Gennemgå alle posts og lav HTML til dem
+            posts.forEach(post => {
+                container.innerHTML += `
+                        <div class="post">
+                            <h2>${post.title}</h2>
+                            <p>${post.content}</p>
+                            <p class="upvotes">▲ Upvotes: ${post.upvote}</p>
+                            <small>Skrevet af User ID: ${post.userId}</small>
+                        </div>
+                    `;
+            });
+        })
+        .catch(error => {
+            console.error('Der skete en fejl:', error);
+            document.getElementById('posts-container').innerHTML = '<p>Kunne ikke hente posts. Kører backenden?</p>';
+        });
+</script>
+
+</body>
+</html>

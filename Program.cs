@@ -2,10 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.Json;
 using RedditApi.Models;
 using RedditApi.Data;
+using RedditApi.Service;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// --- 1. REGISTRER SERVICES (Altid FØR builder.Build()) ---
 
 var AllowSomeStuff = "_AllowSomeStuff";
 builder.Services.AddCors(options =>
@@ -19,12 +18,12 @@ builder.Services.AddCors(options =>
 
 // Tilføj DbContext
 builder.Services.AddDbContext<RedditContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("ContextSQLite")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("ContextSQLite")))
+    
+builder.Services.AddScoped<RedditService>();
 
-// --- 2. BYG APPEN (Låser for flere services) ---
 var app = builder.Build();
 
-// --- 3. MIDDLEWARE PIPELINE (Konfiguration af hvordan appen kører) ---
 
 // VIGTIGT: Aktivér CORS policy
 app.UseCors(AllowSomeStuff);
@@ -58,18 +57,18 @@ app.MapGet("/api/posts", () =>
     return Results.Ok(posts);
 });
 
-// Post: Opret en ny post i databasen
-app.MapPost("/api/posts", (RedditContext db, Post post) =>
+//Opret Post
+app.MapPost("/api/posts", (RedditService service, Post post) =>
 {
-    db.Posts.Add(post);
-    db.SaveChanges();
-    return Results.Created($"/api/posts/{post.PostId}", post);
-});
+    service.CreatePost(post);
+    return Results.Created($"/api/posts/{post.PostId}", post);});
 
-app.MapPost("/api/posts/{id}/comments", (RedditContext db, int id, Comment comment) =>
+
+//Opret Kommentar
+app.MapPost("/api/posts/{id}/comments", (RedditService service, int id, Comment comment) =>
 {
-    // Her kan Ali skrive sin kode
-    return Results.Ok("Kommentar modtaget");
+    var result = service.CreateComment(id, comment);
+    return result == "Post not found" ? Results.NotFound(result) : Results.Created("", comment);
 });
 
 // --- 5. DATABASE INITIALISERING (Seed) ---
